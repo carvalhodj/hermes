@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:splashscreen/splashscreen.dart';
-import 'home_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,7 +11,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Hermes',
       theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
+        primarySwatch: Colors.teal,
       ),
       home: MyHomePage(title: 'Hermes Packet Sender'),
     );
@@ -31,31 +29,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
-  Widget build(BuildContext context) => _introScreen();
-}
-
-Widget _introScreen() {
-  return Stack(
-    children: <Widget>[
-      SplashScreen(
-        seconds: 2,
-        gradientBackground: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [Colors.blueGrey, Colors.blueGrey],
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
         ),
-        navigateAfterSeconds: HomeScreen(),
-        loaderColor: Colors.transparent,
-      ),
-      Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("images/splash.png"),
-            fit: BoxFit.none,
-            scale: 1.50,
-          ),
-        ),
-      ),
-    ],
-  );
+      );
 }
