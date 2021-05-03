@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -10,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<BluetoothDevice> devicesList = <BluetoothDevice>[];
+  final _writeController = TextEditingController();
   BluetoothDevice _connectedDevice;
   List<BluetoothService> _services;
 
@@ -44,18 +47,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Colors.blueGrey[800])),
-                onPressed: () {
-                  setState(() async {
-                    widget.flutterBlue.stopScan();
-                    try {
-                      await device.connect();
-                    } catch (e) {
-                      if (e.code != 'already_connected') {
-                        throw e;
-                      }
-                    } finally {
-                      _services = await device.discoverServices();
+                onPressed: () async {
+                  widget.flutterBlue.stopScan();
+                  try {
+                    await device.connect();
+                  } catch (e) {
+                    if (e.code != 'already_connected') {
+                      throw e;
                     }
+                  } finally {
+                    _services = await device.discoverServices();
+                  }
+                  setState(() {
                     _connectedDevice = device;
                   });
                   // showDialog(
@@ -195,7 +198,40 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: RaisedButton(
               child: Text('WRITE', style: TextStyle(color: Colors.white)),
-              onPressed: () {},
+              onPressed: () async {
+                await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Write"),
+                        content: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: TextField(
+                                controller: _writeController,
+                              ),
+                            ),
+                          ],
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("Send"),
+                            onPressed: () {
+                              characteristic.write(
+                                  utf8.encode(_writeController.value.text));
+                              Navigator.pop(context);
+                            },
+                          ),
+                          FlatButton(
+                            child: Text("Cancel"),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              },
             ),
           ),
         ),
