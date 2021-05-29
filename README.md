@@ -28,6 +28,13 @@ Aplicativo desenvolvido com a tecnologia Flutter (https://flutter.dev)
 
 <img src="https://github.com/carvalhodj/hermes/blob/main/screens/widget-tree-3.png" width="800" height="480">
 
+### Navigation
+
+<img src="https://github.com/carvalhodj/hermes/blob/main/images/navigation.png" width="800" height="1600">
+
+### Vídeo de uso
+
+![caption](https://github.com/carvalhodj/hermes/blob/main/screens/hermes-usage-demo.gif)
 ---
 
 Desenvolvimento ainda em andamento, então algumas funcionalidades podem não ser funcionais até então...
