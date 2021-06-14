@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HomeScreen extends StatefulWidget {
   final FlutterBlue flutterBlue = FlutterBlue.instance;
@@ -16,6 +17,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final _writeController = TextEditingController();
   BluetoothDevice _connectedDevice;
   List<BluetoothService> _services;
+  Position _currentPosition;
+  String _currentAddress;
+  final Geolocator geolocator = Geolocator();
 
   _addDeviceToList(final BluetoothDevice device) {
     if (!devicesList.contains(device)) {
@@ -23,6 +27,18 @@ class _HomeScreenState extends State<HomeScreen> {
         devicesList.add(device);
       });
     }
+  }
+
+  _getCurrentLocation() {
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+      // _getAddressFromLatLng();
+    }).catchError((e) {
+      print(e);
+    });
   }
 
   ListView _buildListViewOfDevices() {
@@ -41,6 +57,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     device.id.toString(),
                   ),
+                  if (_currentPosition != null)
+                    Text(
+                      'Lat:' +
+                          _currentPosition.latitude.toString() +
+                          'Long' +
+                          _currentPosition.longitude.toString(),
+                    ),
                 ],
               ),
             ),
@@ -148,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _getCurrentLocation();
     widget.flutterBlue.connectedDevices
         .asStream()
         .listen((List<BluetoothDevice> devices) {
