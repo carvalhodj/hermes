@@ -1,9 +1,12 @@
+import 'dart:collection';
 import 'dart:convert';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends StatefulWidget {
   final FlutterBlue flutterBlue = FlutterBlue.instance;
@@ -20,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Position _currentPosition;
   String _currentAddress;
   final Geolocator geolocator = Geolocator();
+  FirebaseFirestore firestore;
 
   _addDeviceToList(final BluetoothDevice device) {
     if (!devicesList.contains(device)) {
@@ -73,6 +77,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialStateProperty.all<Color>(Colors.blueGrey[800])),
                 onPressed: () async {
                   widget.flutterBlue.stopScan();
+
+                  writeDataFirebase("daniel", _currentPosition.latitude,
+                      _currentPosition.longitude); // Escrever no firebase
+
                   try {
                     await device.connect();
                   } catch (e) {
@@ -185,6 +193,11 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
     widget.flutterBlue.startScan();
+    Firebase.initializeApp().whenComplete(() {
+      print("completed");
+      firestore = FirebaseFirestore.instance;
+      setState(() {});
+    });
   }
 
   ListView _buildView() {
@@ -376,5 +389,23 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.blueGrey,
       body: _buildView(),
     );
+  }
+
+  void writeDataFirebase(String name, double lat, double lon) {
+    firestore.collection("teste").add({
+      "name": name,
+      "lat": lat.toString(),
+      "lon": lon.toString(),
+    }).then((value) {
+      print(value.id);
+    });
+  }
+
+  Future<DocumentSnapshot> getData() async {
+    await Firebase.initializeApp();
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .doc("docID")
+        .get();
   }
 }

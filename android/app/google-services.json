@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "214907370873",
+    "project_id": "hermes-app-lora",
+    "storage_bucket": "hermes-app-lora.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214907370873:android:33b4a340c0c15bb61dc3a8",
+        "android_client_info": {
+          "package_name": "com.jualabs.hermes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "214907370873-rl0q32cje8k9l5vdtbvl0l6qea8gmnvg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jualabs.hermes",
+            "certificate_hash": "2b45abd9996366f1a4d25488968dcad2d3714e42"
+          }
+        },
+        {
+          "client_id": "214907370873-sasl2gqp71buknn5cq3q35u9tjs6urlo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPZcfbSDQa6BHWECnTki7jP-6N-mj2Tig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "214907370873-sasl2gqp71buknn5cq3q35u9tjs6urlo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
