@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
   final FlutterBlue flutterBlue = FlutterBlue.instance;
@@ -78,8 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () async {
                   widget.flutterBlue.stopScan();
 
-                  writeDataFirebase("daniel", _currentPosition.latitude,
-                      _currentPosition.longitude); // Escrever no firebase
+                  //writeDataFirebase("daniel", _currentPosition.latitude,
+                  //  _currentPosition.longitude); // Escrever no firebase
 
                   try {
                     await device.connect();
@@ -269,8 +270,31 @@ class _HomeScreenState extends State<HomeScreen> {
                         TextButton(
                           child: Text("Send"),
                           onPressed: () {
-                            characteristic.write(
-                                utf8.encode(_writeController.value.text));
+                            try {
+                              characteristic.write(
+                                  utf8.encode(_writeController.value.text));
+                              Fluttertoast.showToast(
+                                  msg: "Message sent",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.blueGrey[800],
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                              writeDataFirebase(
+                                  _writeController.value.text,
+                                  _currentPosition.latitude,
+                                  _currentPosition.longitude);
+                            } catch (e) {
+                              Fluttertoast.showToast(
+                                  msg: "Failed. Please try again.",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.blueGrey[800],
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                            }
                             Navigator.pop(context);
                           },
                         ),
@@ -391,11 +415,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void writeDataFirebase(String name, double lat, double lon) {
-    firestore.collection("teste").add({
-      "name": name,
-      "lat": lat.toString(),
-      "lon": lon.toString(),
+  void writeDataFirebase(String text, double lat, double lon) {
+    DateTime currentPhoneDate = DateTime.now(); //DateTime
+    Timestamp myTimeStamp = Timestamp.fromDate(currentPhoneDate); //To TimeStamp
+
+    var myLocation = GeoPoint(lat, lon);
+
+    firestore.collection("hermes-lora-gateways-messages").add({
+      "text": text,
+      "coordinates": myLocation,
+      "datetime": currentPhoneDate,
     }).then((value) {
       print(value.id);
     });
